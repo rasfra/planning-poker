@@ -1,41 +1,22 @@
 import React from 'react';
 import './App.css';
-import axios from 'axios';
-import {Button} from 'reactstrap';
+import {Route, Switch} from "react-router-dom";
+import Start from "./Start";
+import PokerSession from "./PokerSession";
 
-interface MyState {
-    url: string | null
-}
-
-class App extends React.Component<any, MyState> {
+class App extends React.Component<any, any> {
     constructor(props: any) {
         super(props)
-        this.state = {
-            url: null
-        }
-    }
 
-    startSession = () => {
-        axios.post('http://localhost:8080/api/v1/session')
-            .then(res => this.setState({url: res.data}))
-            .catch(err => console.log(err))
     }
 
     render() {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <Button color="primary" onClick={this.startSession}>Start session</Button>
-                    {this.state.url != null &&
-                    <a href="http://localhost:3000/{this.state.url}">http://localhost:3000/{this.state.url}</a>
-                    }
-                </header>
-            </div>
-        );
-    }
-
-    componentDidMount(): void {
-
+            <Switch>
+                <Route exact path="/" component={Start}/>
+                <Route path="/session/:code" component={PokerSession}/>
+            </Switch>
+        )
     }
 }
 
