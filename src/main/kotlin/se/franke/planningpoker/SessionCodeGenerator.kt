@@ -4,12 +4,14 @@ import java.io.File
 import kotlin.random.Random
 
 class SessionCodeGenerator {
-    val adjectives = ArrayList<String>()
-    val animals = ArrayList<String>()
+    private val adjectives = ArrayList<String>()
+    private val animals = ArrayList<String>()
 
     init {
-        File(SessionCodeGenerator::class.java.getResource("/adjectives.txt").toURI()).forEachLine { adjectives.add(it) }
-        File(SessionCodeGenerator::class.java.getResource("/animals.txt").toURI()).forEachLine { animals.add(it) }
+        File(SessionCodeGenerator::class.java.getResource("/adjectives.txt").toURI())
+                .forEachLine { adjectives.add(it) }
+        File(SessionCodeGenerator::class.java.getResource("/animals.txt").toURI())
+                .forEachLine { if (it.length < 10) animals.add(it) } // Some are a bit.. long
     }
 
     fun generate(): String {
