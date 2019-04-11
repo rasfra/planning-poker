@@ -24,6 +24,7 @@ You are allowed to use any language/frameworks/libraries you want. We would like
 ## Out of scope/issues
 - Vote range hard coded, would be nice with a few selectable sets of rules (fibonacchi, t-shirt sizes, etc)
 - No life cycle of poker sessions, should be implemented if proper persistence is implemented.
+- Might use features not compatible with older browsers (skipping SockJS etc.)
 - No tests
 - Limited error handling, all errors are 5xx which limits what the client can do
 - Ignored CORS stuff, in the real world the frontend would be deployed on the same domain and port as the backend  

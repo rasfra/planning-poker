@@ -1,39 +1,44 @@
 package se.franke.planningpoker
 
+import org.slf4j.LoggerFactory
+import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
 import java.math.BigDecimal
 
 @RestController
 class PokerSessionController(val pokerSessionRepository: PokerSessionRepository, val pokerService: PokerService) {
+    val log = LoggerFactory.getLogger(PokerSessionController::class.java)
+
     @PostMapping("/api/v1/session")
     fun createSession(): String {
-        return pokerSessionRepository.create().publicId
+        val code = pokerSessionRepository.create().code
+        log.info("Creating new session $code")
+        return code
     }
 
     @GetMapping("/api/v1/session/{id}")
     fun getSession(@PathVariable id: String): SessionInfo {
-        val session = pokerSessionRepository.getByPublicId(id)
+        val session = pokerSessionRepository.getByCode(id)
         require(session != null) { "No session with id $id" }
         return SessionInfo(ArrayList(session.votes.values), Vote.possibleValues)
     }
 
-    @PostMapping("/api/v1/session/{id}/votes")
-    fun vote(@PathVariable id: String, @RequestBody vote: PlayerVote) {
-        pokerSessionRepository.addVote(id, Vote(vote.name, vote.value))
+    @MessageMapping("/vote/{code}")
+    @SendTo("/topic/{code}")
+    fun vote(@DestinationVariable code: String, voteMessage: VoteMessage): Vote {
+        val vote = Vote(voteMessage.name, voteMessage.value)
+        pokerSessionRepository.addVote(code, vote)
+        log.info("${vote.name} voted ${vote.value} in session $code: ")
+        return vote
     }
-
-    @MessageMapping("hello")
-    @SendTo("/topic/greetings")
-    fun greeting(hello: HelloMessage): HelloResponse {
-        Thread.sleep(1000) // simulated delay
-        return HelloResponse("Hello ${hello.name}")
-    }
-
 }
 
-class PlayerVote(val name: String, val value: BigDecimal)
+class VoteMessage(val name: String, val value: BigDecimal)
 
 class SessionInfo(val votes: List<Vote>, val validValues: List<BigDecimal>)
 
