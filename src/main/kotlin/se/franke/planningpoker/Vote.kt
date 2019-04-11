@@ -1,10 +1,8 @@
 package se.franke.planningpoker
 
-import java.math.BigDecimal
-
-data class Vote(val name: String, val value: BigDecimal) {
+data class Vote(val name: String, val value: String) {
     companion object {
-        val possibleValues = listOf("0", "0.5", "1", "2", "3", "5", "8", "13").map { BigDecimal(it) }
+        val possibleValues = listOf("0", "1/2", "1", "2", "3", "5", "8", "13")
     }
 
     init {

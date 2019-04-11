@@ -7,4 +7,6 @@ interface PokerSessionRepository {
      * Adds or silently overwrites a vote
      */
     fun addVote(code: String, vote: Vote)
+
+    fun clearVotes(code: String)
 }

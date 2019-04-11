@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
-import java.math.BigDecimal
 
 @RestController
 class PokerSessionController(val pokerSessionRepository: PokerSessionRepository, val pokerService: PokerService) {
@@ -21,11 +20,19 @@ class PokerSessionController(val pokerSessionRepository: PokerSessionRepository,
         return code
     }
 
-    @GetMapping("/api/v1/session/{id}")
-    fun getSession(@PathVariable id: String): SessionInfo {
-        val session = pokerSessionRepository.getByCode(id)
-        require(session != null) { "No session with id $id" }
+    @GetMapping("/api/v1/session/{code}")
+    fun getSession(@PathVariable code: String): SessionInfo {
+        val session = pokerSessionRepository.getByCode(code)
+        require(session != null) { "No session with id $code" }
         return SessionInfo(ArrayList(session.votes.values), Vote.possibleValues)
+    }
+
+    @MessageMapping("/clear/{code}")
+    @SendTo("/topic/clear/{code}")
+    fun clearVotes(@DestinationVariable code: String): String {
+        pokerSessionRepository.clearVotes(code)
+        log.info("Clearing votes in session $code")
+        return "CLEAR" // body won't be read, just trigger something. Can empty messages be sent?
     }
 
     @MessageMapping("/vote/{code}")
@@ -38,10 +45,6 @@ class PokerSessionController(val pokerSessionRepository: PokerSessionRepository,
     }
 }
 
-class VoteMessage(val name: String, val value: BigDecimal)
+class VoteMessage(val name: String, val value: String)
 
-class SessionInfo(val votes: List<Vote>, val validValues: List<BigDecimal>)
-
-class HelloMessage(var name: String)
-
-class HelloResponse(var content: String)
+class SessionInfo(val votes: List<Vote>, val validValues: List<String>)
