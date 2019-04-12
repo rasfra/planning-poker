@@ -1,6 +1,5 @@
 package se.franke.planningpoker
 
-import java.io.File
 import kotlin.random.Random
 
 class SessionCodeGenerator {
@@ -8,10 +7,14 @@ class SessionCodeGenerator {
     private val animals = ArrayList<String>()
 
     init {
-        File(SessionCodeGenerator::class.java.getResource("/adjectives.txt").toURI())
-                .forEachLine { adjectives.add(it) }
-        File(SessionCodeGenerator::class.java.getResource("/animals.txt").toURI())
-                .forEachLine { if (it.length < 10) animals.add(it) } // Some are a bit.. long
+        SessionCodeGenerator::class.java.getResourceAsStream("/adjectives.txt").bufferedReader()
+                .use { reader ->
+                    reader.readLines().forEach { adjectives.add(it) }
+                }
+        SessionCodeGenerator::class.java.getResourceAsStream("/animals.txt").bufferedReader()
+                .use { reader ->
+                    reader.readLines().filter { it.length <= 10 }.forEach { animals.add(it) }
+                }
     }
 
     fun generate(): String {
@@ -19,6 +22,6 @@ class SessionCodeGenerator {
     }
 
     private fun randomEl(list: List<String>): String {
-        return list[Random.nextInt(list.size - 1)]
+        return list[if (list.size > 1) Random.nextInt(list.size - 1) else 0]
     }
 }
