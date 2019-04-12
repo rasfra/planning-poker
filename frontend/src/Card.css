@@ -1,0 +1,31 @@
+
+.card {
+    /* Height is a bit wonky for some screen sizes atm since it's static */
+    height: 250px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card:hover {
+    background-color: #eee;
+}
+
+.card.selected {
+    border: 2px solid dodgerblue;
+}
+
+.card span, .vote-result {
+    font-size: 56px;
+}
+
+.vote-result {
+    text-align: center;
+    color: #ddd;
+}
+
+.positive {
+    color: #000;
+}
