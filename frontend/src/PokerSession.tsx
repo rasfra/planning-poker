@@ -68,7 +68,7 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
 
     private createWSClient() {
         return new Client({
-            brokerURL: "/app",
+            brokerURL: "ws://localhost:8080/app",
             debug: msg => console.log(msg),
             onConnect: () => {
                 this.subscribeVotes();
