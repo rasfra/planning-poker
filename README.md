@@ -5,15 +5,9 @@
 - Java JDK 8
 - Node/NPM
 
-To start the application first run
-```
-build.sh
-``` 
-This assembles both the react app and backend into a single fat jar. To run the application execute
-```
-run.sh
-``` 
-Then open a web browser at http://localhost:8080
+To start the application simply execute and `run.sh` open a web browser at http://localhost:8080.  
+
+This runs `npm install`, `npm run build` and then assembles both the react app and the backend application into a single fat jar before running it.
 
 ## Out of scope/known issues
 ### General
