@@ -31,7 +31,7 @@ class Start extends React.Component<any, State> {
     }
 
     createAndJoinSession = () => {
-        axios.post('http://localhost:8080/api/v1/session')
+        axios.post('/api/v1/session')
             .then(res => this.setState({sessionCode: res.data}))
             .catch(err => console.log(err))
     };

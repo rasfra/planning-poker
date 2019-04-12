@@ -68,7 +68,7 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
 
     private createWSClient() {
         return new Client({
-            brokerURL: "ws://localhost:8080/app",
+            brokerURL: "/app",
             debug: msg => console.log(msg),
             onConnect: () => {
                 this.subscribeVotes();
@@ -101,7 +101,7 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
     }
 
     private loadInitialState() {
-        axios.get(`http://localhost:8080/api/v1/session/${this.sessionCode}`)
+        axios.get(`/api/v1/session/${this.sessionCode}`)
             .then(res => {
                 this.loadSession(res.data)
                 this.stompClient.activate()
