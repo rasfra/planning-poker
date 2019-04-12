@@ -37,3 +37,9 @@ compileTestKotlin {
 		jvmTarget = '1.8'
 	}
 }
+
+processResources {
+    from('frontend/build/') {
+        into 'public'
+    }
+}
