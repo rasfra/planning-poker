@@ -89,7 +89,8 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
     private subscribeResets() {
         this.stompClient.subscribe(`/topic/clear/${this.sessionCode}`, message => {
             this.setState({
-                votes: new Map()
+                votes: new Map(),
+                selected: null
             })
         })
     }
