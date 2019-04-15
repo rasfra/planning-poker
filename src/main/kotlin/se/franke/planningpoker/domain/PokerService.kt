@@ -18,10 +18,10 @@ class PokerService(val repository: PokerSessionRepository, val sessionCodeGenera
         return repository.getByCode(code)
     }
 
-    fun addVote(code: String, vote: Vote) {
+    fun addVote(code: String, user: User, vote: Vote) {
         val session = getByCode(code)
         require(session != null) { "No session with id $code" }
-        repository.update(PokerSession(session.id, session.code, HashMap(session.votes).also { it[vote.user] = vote }))
+        repository.update(PokerSession(session.id, session.code, HashMap(session.votes).also { it[user] = vote }))
     }
 
     fun clearVotes(code: String) {

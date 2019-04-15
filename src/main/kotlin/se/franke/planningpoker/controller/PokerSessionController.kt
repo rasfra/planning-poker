@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import se.franke.planningpoker.domain.PokerService
+import se.franke.planningpoker.domain.User
 import se.franke.planningpoker.domain.Vote
 
 @RestController
@@ -26,7 +27,7 @@ class PokerSessionController(val pokerService: PokerService) {
     fun getSession(@PathVariable code: String): SessionState {
         val session = pokerService.getByCode(code)
         require(session != null) { "No session with id $code" }
-        return SessionState(session.votes.entries.map { VoteDTO(it.key, it.value.value) }, Vote.possibleValues)
+        return SessionState(session.votes.entries.map { VoteDTO(it.key.name, it.value.value) }, Vote.possibleValues)
     }
 
     @MessageMapping("/clear/{code}")
@@ -40,9 +41,8 @@ class PokerSessionController(val pokerService: PokerService) {
     @MessageMapping("/vote/{code}")
     @SendTo("/topic/{code}")
     fun vote(@DestinationVariable code: String, voteDTO: VoteDTO): VoteDTO {
-        val vote = Vote(voteDTO.name, voteDTO.value)
-        pokerService.addVote(code, vote)
-        log.info("${vote.user} voted ${vote.value} in session $code: ")
+        pokerService.addVote(code, User(voteDTO.name), Vote(voteDTO.value))
+        log.info("${voteDTO.name} voted ${voteDTO.value} in session $code: ")
         return voteDTO
     }
 }
