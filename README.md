@@ -14,7 +14,7 @@ For rapid deployments during development, the backend can be run via `PlanningPo
 
 ## Out of scope/known issues
 MVP focus to keep a reasonable scope meaning:   
-- No tests
+- Only a few simple tests
 - Simple GUI, no side/top/footer, limited responsiveness, console error logging only
 - No persistence, in memory only
 - No life cycle of poker sessions, should be implemented if proper persistence is implemented.
