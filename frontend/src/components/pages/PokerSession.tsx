@@ -2,7 +2,7 @@ import React from "react";
 import {RouteComponentProps} from "react-router";
 import axios from "axios";
 import {Client} from "@stomp/stompjs";
-import NameDialog from "./NameDialog";
+import NameDialog from "../forms/NameDialog";
 import {Button} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
@@ -75,7 +75,6 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
     private createWSClient() {
         return new Client({
             brokerURL: "ws://localhost:8080/app",
-            debug: msg => console.log(msg),
             onConnect: () => {
                 this.subscribeVotes();
                 this.subscribeResets();
