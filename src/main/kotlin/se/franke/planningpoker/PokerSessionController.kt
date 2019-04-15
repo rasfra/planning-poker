@@ -32,7 +32,7 @@ class PokerSessionController(val pokerSessionRepository: PokerSessionRepository,
     fun clearVotes(@DestinationVariable code: String): String {
         pokerSessionRepository.clearVotes(code)
         log.info("Clearing votes in session $code")
-        return "CLEAR" // body won't be read, just trigger something. Can empty messages be sent?
+        return "" // No body, the existance of the message itself is the important thing.
     }
 
     @MessageMapping("/vote/{code}")

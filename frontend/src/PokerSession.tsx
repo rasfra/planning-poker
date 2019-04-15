@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import {RouteComponentProps} from "react-router";
-import axios from 'axios';
-import {Client} from '@stomp/stompjs';
+import axios from "axios";
+import {Client} from "@stomp/stompjs";
 import NameDialog from "./NameDialog";
 import {Button} from "@material-ui/core";
 import {Link} from "react-router-dom";
@@ -38,8 +38,8 @@ interface VoteMessage {
 }
 
 class PokerSession extends React.Component<PokerRouterProps, State> {
-    stompClient: Client
-    sessionCode: string
+    stompClient: Client;
+    sessionCode: string;
     cardsStyle = {
         display: "flex"
     };
@@ -59,7 +59,13 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
     }
 
     componentDidMount(): void {
-        this.loadInitialState();
+        axios.get(`/api/v1/session/${this.sessionCode}`)
+            .then(res => {
+                this.loadSessionState(res.data);
+                this.stompClient.activate()
+
+            })
+            .catch(err => console.log(err.response));
     }
 
     componentWillUnmount(): void {
@@ -75,7 +81,7 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
                 this.subscribeResets();
             },
             onStompError: (frame) => {
-                console.log(`Broker reported error: ${frame.headers['message']}`);
+                console.log(`Broker reported error: ${frame.headers["message"]}`);
                 console.log(`Additional details: ${frame.body}`);
             }
         });
@@ -91,28 +97,20 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
 
     private subscribeVotes() {
         this.stompClient.subscribe(`/topic/${this.sessionCode}`, message => {
-            const vote = JSON.parse(message.body) as Vote
+            const vote = JSON.parse(message.body) as Vote;
             this.setState(state => {
-                const votes = new Map(state.votes)
-                votes.set(vote.name, vote)
+                const votes = new Map(state.votes);
+                votes.set(vote.name, vote);
                 return {votes: votes}
             });
         })
     }
 
-    private loadInitialState() {
-        axios.get(`/api/v1/session/${this.sessionCode}`)
-            .then(res => {
-                this.loadSession(res.data)
-                this.stompClient.activate()
+    private loadSessionState(get: GetSession) {
+        // Convert to Map with users as key to easily avoid duplicates
+        const voteMap: Map<string, Vote> = get.votes.reduce((map, b) => map.set(b.name, b), new Map());
 
-            })
-            .catch(err => console.log(err.response));
-    }
-
-    loadSession(get: GetSession) {
-        // Covert to Map
-        const voteMap: Map<string, Vote> = get.votes.reduce((map, b) => map.set(b.name, b), new Map())
+        // Did user have a preselected value? (e.g. session left and rejoined)
         let selectedValue = null; // I sure wish js had optionals or null propagation operators
         if (this.state.name != null) {
             const vote = voteMap.get(this.state.name);
@@ -127,7 +125,7 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
         })
     }
 
-    vote = (value: string) => {
+    private vote = (value: string) => {
         this.setState({
             selected: value
         });
@@ -138,27 +136,27 @@ class PokerSession extends React.Component<PokerRouterProps, State> {
         })
     };
 
-    handleReset = () => {
+    private handleReset = () => {
         this.stompClient.publish({
             destination: `/voting/clear/${this.sessionCode}`
-        })
+        });
         this.setState({
             selected: null
         })
     };
 
-    handleNameSubmit = (name: string) => {
+    private handleNameSubmit = (name: string) => {
         this.setState({
             name: name
         })
     };
 
-    voteCount(value: string): number {
+    private voteCount(value: string): number {
         return Array.from(this.state.votes.values())
             .filter((v) => v.value == value).length
     }
 
-    BackLink = (props: any) => <Link to="/" {...props} />
+    private BackLink = (props: any) => <Link to="/" {...props} />;
 
     render() {
         if (this.state.name == null) {

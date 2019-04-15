@@ -1,7 +1,7 @@
-import React from 'react';
-import axios from 'axios';
+import React from "react";
+import axios from "axios";
 import {Redirect} from "react-router-dom";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import {Grid} from "@material-ui/core";
 
 interface State {
@@ -10,11 +10,17 @@ interface State {
 
 class Start extends React.Component<any, State> {
     constructor(props: any) {
-        super(props)
+        super(props);
         this.state = {
             sessionCode: null
         }
     }
+
+    createAndJoinSession = () => {
+        axios.post("/api/v1/session")
+            .then(res => this.setState({sessionCode: res.data}))
+            .catch(err => console.log(err))
+    };
 
     render() {
         return (
@@ -29,12 +35,6 @@ class Start extends React.Component<any, State> {
             </Grid>
         );
     }
-
-    createAndJoinSession = () => {
-        axios.post('/api/v1/session')
-            .then(res => this.setState({sessionCode: res.data}))
-            .catch(err => console.log(err))
-    };
 }
 
 export default Start;
