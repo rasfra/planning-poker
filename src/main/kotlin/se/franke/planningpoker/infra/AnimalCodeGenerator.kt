@@ -1,23 +1,26 @@
-package se.franke.planningpoker
+package se.franke.planningpoker.infra
 
+import org.springframework.stereotype.Component
+import se.franke.planningpoker.domain.SessionCodeGenerator
 import kotlin.random.Random
 
-class SessionCodeGenerator {
+@Component
+class AnimalCodeGenerator : SessionCodeGenerator {
     private val adjectives = ArrayList<String>()
     private val animals = ArrayList<String>()
 
     init {
-        SessionCodeGenerator::class.java.getResourceAsStream("/adjectives.txt").bufferedReader()
+        AnimalCodeGenerator::class.java.getResourceAsStream("/adjectives.txt").bufferedReader()
                 .use { reader ->
                     reader.readLines().forEach { adjectives.add(it) }
                 }
-        SessionCodeGenerator::class.java.getResourceAsStream("/animals.txt").bufferedReader()
+        AnimalCodeGenerator::class.java.getResourceAsStream("/animals.txt").bufferedReader()
                 .use { reader ->
                     reader.readLines().filter { it.length <= 10 }.forEach { animals.add(it) }
                 }
     }
 
-    fun generate(): String {
+    override fun next(): String {
         return randomEl(adjectives) + randomEl(animals)
     }
 

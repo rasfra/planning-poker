@@ -1,6 +1,6 @@
-package se.franke.planningpoker
+package se.franke.planningpoker.domain
 
-data class Vote(val name: String, val value: String) {
+data class Vote(val user: String, val value: String) {
     companion object {
         val possibleValues = listOf("0", "1/2", "1", "2", "3", "5", "8", "13")
     }
